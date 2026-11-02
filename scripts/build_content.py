@@ -1,0 +1,126 @@
+from pathlib import Path
+import json
+ROOT=Path(__file__).resolve().parents[1]
+data={
+ 'source':{'document':'OrbitRIR manuscript','tables':[1,2]},
+ 'synthesis':{
+ '1':[
+ {'method':'FLAC','values':[10.287,1.0884,43.437,4.990,15.111,22.509],'std':[.026,.0088,.397,.115,.129,.181]},
+ {'method':'OrbitRIR','values':[9.543,1.0559,41.754,5.166,16.071,23.721],'std':[.054,.0040,.347,.166,.241,.150]},
+ {'method':'Yaw-Augmented FLAC','values':[9.397,1.0855,42.447,5.031,15.919,23.166],'std':[.052,.0051,.379,.063,.256,.135]}],
+ '8':[
+ {'method':'FLAC','values':[8.993,1.0093,40.650,5.173,15.430,23.409],'std':[.011,.0035,.101,.138,.197,.056]},
+ {'method':'OrbitRIR','values':[8.202,.9778,38.793,5.387,16.456,24.198],'std':[.017,.0015,.074,.075,.038,.164]},
+ {'method':'Yaw-Augmented FLAC','values':[7.965,1.0132,39.923,5.391,16.563,23.961],'std':[.014,.0016,.057,.097,.169,.107]}]},
+ 'localization':[
+ {'method':'OrbitRIR','values':[.928,28.1,53.1,40.6]},
+ {'method':'FLAC','values':[1.009,15.6,50.0,23.4]},
+ {'method':'Yaw-Augmented FLAC','values':[.892,21.9,54.7,34.4]},
+ {'method':'FEM-Based Localization','values':[1.059,28.1,50.0,35.9]},
+ {'method':'Few-ShotRIR (AR-adapted)','values':[1.595,1.6,26.6,15.6]},
+ {'method':'Random Selection','values':[2.320,7.8,18.8,14.1]}]}
+(ROOT/'results.json').write_text(json.dumps(data,indent=2)+'\n')
+
+def synthesis_table(k):
+ rows=data['synthesis'][k]
+ best=[(min if j<3 else max)(r['values'][j] for r in rows) for j in range(6)]
+ html=f'<div class="synthesis-panel" id="context-{k}"><div class="table-wrap" tabindex="0" role="region" aria-label="Synthesis results with {k} context RIRs"><table class="results-table"><caption>Table 1 · Unseen AcousticRooms · K<sub>ctx</sub> = {k}</caption><thead><tr><th scope="col">Method</th><th scope="col">T60 (%) ↓</th><th scope="col">C50 (dB) ↓</th><th scope="col">EDT (ms) ↓</th><th scope="col">R@1 (%) ↑</th><th scope="col">R@5 (%) ↑</th><th scope="col">R@10 (%) ↑</th></tr></thead><tbody>'
+ for r in rows:
+  cls=' class="ours"' if r['method']=='OrbitRIR' else ''
+  html+=f'<tr{cls}><th scope="row">{r["method"]}</th>'
+  for j,(v,s) in enumerate(zip(r['values'],r['std'])):
+   digits=4 if j==1 else 3
+   val=f'{v:.{digits}f}'
+   if v==best[j]:val=f'<strong>{val}</strong>'
+   html+=f'<td>{val}<span class="std">± {s:.{digits}f}</span></td>'
+  html+='</tr>'
+ return html+'</tbody></table></div></div>'
+
+def localization_table():
+ rows=data['localization'];best=[(min if j==0 else max)(r['values'][j] for r in rows) for j in range(4)]
+ html='<div class="table-wrap" tabindex="0" role="region" aria-label="Localization benchmark results"><table class="results-table localization-table"><caption>Table 2 · 64 queries from 16 unseen rooms · K<sub>ctx</sub> = 8</caption><thead><tr><th scope="col">Method</th><th scope="col">Median error (m) ↓</th><th scope="col">SR@0.5 m ↑</th><th scope="col">SR@1.0 m ↑</th><th scope="col">Resolution-aware<br>SR@0.5 m ↑</th></tr></thead><tbody>'
+ for r in rows:
+  cls=' class="ours"' if r['method']=='OrbitRIR' else ''
+  html+=f'<tr{cls}><th scope="row">{r["method"]}</th>'
+  for j,v in enumerate(r['values']):
+   val=f'{v:.3f}' if j==0 else f'{v:.1f}%'
+   if v==best[j]:val=f'<strong>{val}</strong>'
+   html+=f'<td>{val}</td>'
+  html+='</tr>'
+ return html+'</tbody></table></div>'
+
+html='''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OrbitRIR | Frame-Averaged Few-Shot RIR Synthesis</title>
+<meta name="description" content="OrbitRIR uses Frame Averaging to build receiver-yaw invariance into few-shot room impulse response synthesis, then inverts the frozen generator for 3D sound source localization.">
+<meta name="theme-color" content="#173d39">
+<meta property="og:title" content="OrbitRIR — From Sound to Space"><meta property="og:description" content="Frame-Averaged Few-Shot RIR Synthesis for 3D Sound Source Localization."><meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg"><link rel="stylesheet" href="./style.css"><script src="./app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap nav-row">
+<a class="brand" href="#top" aria-label="OrbitRIR, back to top"><img src="./favicon.svg" width="30" height="30" alt="">OrbitRIR</a>
+<nav class="nav-links" id="navigation" aria-label="Main navigation"><a href="#overview">Overview</a><a href="#method">Method</a><a href="#results">Results</a><a href="#resources">Resources</a></nav>
+<span class="private-badge">Research project</span><button class="menu-toggle js-only" aria-expanded="false" aria-controls="navigation">Menu</button>
+</div></header>
+<main id="main" class="wrap">
+<section class="hero" id="top" aria-labelledby="title">
+<div class="eyebrow">NeurIPS 2026 · ESR Workshop</div>
+<div class="hero-grid"><div>
+<h1 id="title" class="wordmark">Orbit<em>RIR</em></h1>
+<p class="paper-title">Frame-Averaged Few-Shot RIR Synthesis for 3D Sound Source Localization</p>
+<p class="hero-copy">Learn how a room sounds.<br>Use that knowledge to find where sound begins.</p>
+<p class="authors"><a href="https://yixun-hu.github.io/" target="_blank" rel="noopener noreferrer">Yixun Hu</a> · Zhixuan Zhao<br>Tao Zhong · Christine Allen-Blanchette</p>
+<p class="affiliation">Princeton University</p>
+<div class="actions"><a class="button primary" href="#resources">Paper &amp; resources <span aria-hidden="true">↓</span></a><a class="button" href="https://github.com/Yixun-Hu/OrbitRIR-project-page" target="_blank" rel="noopener noreferrer">Website source <span aria-hidden="true">↗</span></a></div>
+<p class="hero-note">A geometry-constrained acoustic generator, inverted for localization without task-specific training.</p>
+</div><figure class="hero-art">
+<div class="art-heading"><span></span>From sound to space<span></span></div>
+<a class="fig-link" href="./assets/teaser.jpeg" aria-label="Enlarge the conceptual source-localization illustration"><img src="./assets/teaser.jpeg" width="2600" height="1819" alt="Conceptual room scene with a robot receiver, a ground-truth speaker, and a predicted speaker position."></a>
+<figcaption>Conceptual illustration from the paper · not a robot experiment</figcaption></figure></div>
+<div class="stats" aria-label="Selected results"><div class="stat"><div class="stat-number">8.8<small>%</small></div><p class="stat-title">Lower T60 error</p><p class="stat-note">Relative to FLAC · unseen rooms · K<sub>ctx</sub> = 8</p></div><div class="stat"><div class="stat-number">28.1<small>%</small></div><p class="stat-title">Localization within 0.5 m</p><p class="stat-note">FLAC: 15.6% · 64 localization queries</p></div><div class="stat"><div class="stat-number">0.928<small> m</small></div><p class="stat-title">Median localization error</p><p class="stat-note">Frozen generator · no localization fine-tuning</p></div></div>
+</section>
+<section class="section" id="overview" aria-labelledby="overview-title"><div class="section-label"><span>01</span> The idea</div>
+<div class="intro-grid"><div><h2 id="overview-title">A room leaves<br>its signature in sound.</h2><p class="quiet">Can a model trained to synthesize acoustics also reason about space?</p></div><div class="intro-body"><p>A room impulse response (RIR) captures how sound travels from a source to a receiver, including reflections from the surrounding environment. It carries information about both the room and the source location.</p><p><strong>OrbitRIR learns this forward acoustic model from sparse room context.</strong> We build a known physical symmetry into its conditioning: re-expressing the same scene in a different receiver-yaw coordinate frame should not change an omnidirectional, monaural RIR.</p><p>Then we turn prediction into inference. With the generator frozen, we synthesize responses at candidate 3D locations and find the one most compatible with the observation.</p></div></div>
+<details class="abstract"><summary>Read the research summary</summary><p>Embodied spatial reasoning requires inferring 3D world states from partial sensory observations. Room acoustics offers a rich spatial signal, but few-shot acoustic generators do not necessarily respect known symmetries. OrbitRIR incorporates receiver-yaw invariance through Frame Averaging over a finite yaw orbit. Its geometry-conditioned latent flow-matching model predicts RIRs using a panoramic depth map and sparse acoustic context. The same trained model supports 3D sound source localization through analysis-by-synthesis, without localization-specific training or fine-tuning. On AcousticRooms, it improves all six synthesis metrics over FLAC at both context sizes and improves localization performance over that baseline. This summary paraphrases the manuscript.</p></details>
+<figure class="figure"><a class="fig-link" href="./assets/pipeline.png" aria-label="Enlarge the full OrbitRIR pipeline"><img src="./assets/pipeline.png" width="4000" height="1852" loading="lazy" alt="Training: frame-averaged geometry and source positions condition a DiT with acoustic context and a frozen VAE. Inference: the frozen generator synthesizes candidate responses, which are scored against the observed RIR."></a><figcaption><span class="figure-number">Figure 2 ·</span>One forward model, two uses. Train for few-shot RIR synthesis; freeze the model and compare candidate-conditioned responses for 3D localization. Figure reproduced from the manuscript.</figcaption></figure>
+</section>
+<section class="section" id="method" aria-labelledby="method-title"><div class="section-label"><span>02</span> The method</div><h2 id="method-title">Different frames.<br>The same acoustic scene.</h2><p class="lead">Frame Averaging removes an arbitrary coordinate choice from the conditioning. The geometry encoder is shared across yaw frames, and its outputs are averaged before conditioning the generator.</p>
+<div class="method-steps"><article class="step"><span class="step-no">01 / TRANSFORM</span><h3>Build the yaw orbit</h3><p>Transform the panoramic geometry and target/context source coordinates consistently. Keep the receiver position and acoustic RIRs fixed.</p></article><article class="step"><span class="step-no">02 / AVERAGE</span><h3>Share, encode, average</h3><p>Apply the same ViT and linear projection to each frame. Averaging the features produces an invariant geometry representation over the chosen finite group.</p></article><article class="step"><span class="step-no">03 / GENERATE</span><h3>Synthesize a response</h3><p>Combine the invariant conditioning with acoustic context. A DiT trained with latent flow matching predicts RIR latents, decoded by a frozen pretrained VAE.</p></article></div>
+<div class="orbit-demo"><div><div class="eyebrow">Explore the symmetry · conceptual</div><h3>A rotation only reorders the sum.</h3><p>Choose a C<sub>4</sub> frame change. The four encoded features are permuted; their average stays the same.</p><div class="angle-controls js-only" role="group" aria-label="Receiver-yaw frame change"><button data-angle="0" aria-pressed="true">0°</button><button data-angle="90" aria-pressed="false">90°</button><button data-angle="180" aria-pressed="false">180°</button><button data-angle="270" aria-pressed="false">270°</button></div></div><div class="orbit-equation"><div class="frames" aria-hidden="true"><div class="frame-token"><strong>F₀</strong><small>0°</small></div><div class="frame-token"><strong>F₁</strong><small>90°</small></div><div class="frame-token"><strong>F₂</strong><small>180°</small></div><div class="frame-token"><strong>F₃</strong><small>270°</small></div></div><div class="equation">F̄ = ¼ (F₀ + F₁ + F₂ + F₃)</div><div class="invariant-label">Same set → same average</div><span id="orbit-status" class="sr-only" aria-live="polite">The average is unchanged under a C4 frame change.</span></div></div>
+<p class="scope-note"><strong>What is guaranteed?</strong> Invariance over the finite yaw group C<sub>N</sub>, illustrated here with C<sub>4</sub>. This is a change of coordinate frame for the same omnidirectional monaural acoustic scene; it does not mean a directional speaker can be turned without changing its acoustics. Arbitrary continuous SO(2) invariance is not guaranteed.</p>
+<figure class="figure"><a class="fig-link" href="./assets/frame-averaging.png" aria-label="Enlarge the Frame Averaging diagram"><img src="./assets/frame-averaging.png" width="4000" height="1791" loading="lazy" alt="Four frame-aligned panoramas, geometry coordinate maps and source queries at 0, 90, 180 and 270 degrees pass through a shared ViT and projection, then are averaged."></a><figcaption><span class="figure-number">Figure 3 ·</span>Frame-averaged geometry conditioning. A yaw transformation within C<sub>4</sub> reindexes the same orbit. Each transformation is applied consistently to the panorama, geometry coordinates, and source query.</figcaption></figure>
+</section>
+<section class="section" id="results" aria-labelledby="results-title"><div class="section-label"><span>03</span> Experimental results</div><h2 id="results-title">Better acoustics.<br>More useful spatial predictions.</h2><p class="lead">Evaluated on AcousticRooms, with sparse and dense acoustic context. The tables below reproduce the manuscript’s reported results, including the baselines and their trade-offs.</p>
+<div class="result-head"><h3>Few-shot RIR synthesis</h3><div class="context-controls js-only" role="group" aria-label="Acoustic context size"><button data-context="1" aria-pressed="false" aria-controls="context-1">K = 1 · sparse</button><button data-context="8" aria-pressed="true" aria-controls="context-8">K = 8 · dense</button></div></div>
+<!-- SYNTHESIS_TABLES -->
+<p class="table-note">Mean ± sample standard deviation over five evaluation seeds (42–46), resampling context RIRs and generative noise. Bold indicates the best mean in each column. T60: reverberation-time error; C50: clarity error; EDT: early decay-time error. R@k: AGREE retrieval recall. ↓ lower is better; ↑ higher is better.</p>
+<p class="result-takeaway">OrbitRIR improves all six synthesis metrics over FLAC for both context sizes. Yaw augmentation has lower T60 error; at K = 8, it also has slightly higher R@1 and R@5. OrbitRIR has lower C50 and EDT errors and higher R@10 in both settings.</p>
+<div class="result-subsection"><h3>Stable across receiver-yaw frames</h3><p class="quiet">Re-expressing the same unseen-room queries at 0°, 90°, 180°, and 270° leaves OrbitRIR’s reported metrics nearly unchanged. FLAC is sensitive to the coordinate frame.</p><figure class="figure"><a class="fig-link" href="./assets/yaw-robustness.png" aria-label="Enlarge yaw robustness plots"><img src="./assets/yaw-robustness.png" width="3338" height="1461" loading="lazy" alt="Six plots compare synthesis errors and retrieval recalls across four yaw angles. OrbitRIR is nearly constant, while FLAC varies with yaw."></a><figcaption><span class="figure-number">Figure 4 ·</span>Receiver-yaw invariance on unseen AcousticRooms, for K<sub>ctx</sub> = 1 and 8. Error bars show standard deviation. The experiment checks the chosen C<sub>4</sub> orbit.</figcaption></figure></div>
+<div class="split-results"><div><h3>Localize by listening<br>to candidate predictions.</h3><p class="quiet">Given an observed monaural RIR, query the frozen model at each candidate source position. Compare generated and observed responses using cosine similarity in the frozen AGREE audio embedding space, then return the highest-scoring location.</p><p class="result-takeaway">SR@0.5 m increases from <strong>15.6% to 28.1%</strong> relative to FLAC: a gain of <strong>12.5 percentage points</strong>.</p></div><div class="bar-card" role="img" aria-label="Localization success within 0.5 meters: FLAC 15.6 percent, Yaw-Augmented FLAC 21.9 percent, OrbitRIR 28.1 percent, FEM 28.1 percent. Axis from zero to 40 percent."><h3>Within half a meter</h3><div class="bar-row"><span>FLAC</span><div class="bar-track"><div class="bar" style="width:39%"></div></div><span class="bar-value">15.6%</span></div><div class="bar-row"><span>Yaw-Aug. FLAC</span><div class="bar-track"><div class="bar" style="width:54.75%"></div></div><span class="bar-value">21.9%</span></div><div class="bar-row"><strong>OrbitRIR</strong><div class="bar-track"><div class="bar ours" style="width:70.25%"></div></div><strong class="bar-value">28.1%</strong></div><div class="bar-row"><span>FEM</span><div class="bar-track"><div class="bar" style="width:70.25%"></div></div><span class="bar-value">28.1%</span></div><div class="chart-axis"><span>0%</span><span>20%</span><span>40%</span></div><p class="table-note">SR@0.5 m ↑ · Same protocol as Table 2</p></div></div>
+<!-- LOCALIZATION_TABLE -->
+<p class="table-note">SR is the fraction of predictions within the stated Euclidean distance. The resolution-aware metric adjusts for the candidate grid’s discretization error (manuscript Appendix B.5). All methods use the evaluation protocol described in the paper.</p>
+<p class="result-takeaway">OrbitRIR ties FEM on SR@0.5 m and has the highest resolution-aware SR@0.5 m. Yaw-Augmented FLAC has the lowest median error and highest SR@1.0 m. These metrics capture different parts of the error distribution.</p>
+<figure class="figure"><a class="fig-link" href="./assets/localization-results.jpeg" aria-label="Enlarge localization examples from six unseen rooms"><img src="./assets/localization-results.jpeg" width="3300" height="1993" loading="lazy" alt="OrbitRIR localization predictions in six unseen rooms: apartments, bathrooms, bedrooms, living rooms with hallway, meeting room and restaurants. Blue circles are predictions; red crosses are ground-truth source positions; dark cones mark receivers."></a><figcaption><span class="figure-number">Figure 10 ·</span>Qualitative localization examples in six unseen rooms. Blue circles mark OrbitRIR predictions; red crosses mark ground-truth sources; dark markers indicate receivers. These are the examples reported in the manuscript.</figcaption></figure>
+<div class="limitations"><h3>Scope &amp; limitations</h3><div><p>Experiments shown here use AcousticRooms. The method assumes an omnidirectional monaural RIR, registered geometry, and sparse acoustic context. The illustrations do not establish real-robot deployment.</p><p>Frame Averaging enforces invariance on a finite yaw orbit. Localization searches a finite candidate grid: finer resolution can improve spatial precision at increased inference cost.</p></div></div>
+</section>
+<section class="section" id="resources" aria-labelledby="resources-title"><div class="section-label"><span>04</span> Read &amp; explore</div><div class="resources-grid"><div><h2 id="resources-title">The paper.<br>The next steps.</h2><p class="quiet">Research materials for reviewing OrbitRIR.</p><div class="resource-links"><div class="resource-row disabled"><span><strong>Paper / arXiv</strong><small>The public paper link will be added when available</small></span><span>Pending</span></div><div class="resource-row disabled"><span><strong>Research code</strong><small>A public code release has not been announced</small></span><span>Pending</span></div><a class="resource-row" href="https://github.com/Yixun-Hu/OrbitRIR-project-page" target="_blank" rel="noopener noreferrer"><span><strong>Website source</strong><small>HTML, CSS, JavaScript and paper figures</small></span><span aria-hidden="true">↗</span></a></div></div><div class="citation-box"><h3>Citation</h3><p class="citation-note">Provisional manuscript citation. Author order and publication metadata should be confirmed against the final public paper.</p><pre id="bibtex">@misc{hu2026orbitrir,
+  title = {OrbitRIR: Frame-Averaged Few-Shot
+    RIR Synthesis for 3D Sound Source Localization},
+  author = {Hu, Yixun and Zhao, Zhixuan and
+    Zhong, Tao and Allen-Blanchette, Christine},
+  year = {2026},
+  note = {Manuscript; NeurIPS 2026 ESR Workshop}
+}</pre><button id="copy-citation" class="js-only">Copy BibTeX</button><span id="copy-status" class="sr-only" aria-live="polite"></span></div></div><div class="preview-notice"><strong>Resource availability.</strong> Public paper and research-code links will be added here when available.</div></section>
+</main>
+<footer class="wrap site-footer"><p>OrbitRIR · Princeton University · 2026</p><p>Figures and results from the OrbitRIR manuscript. <a href="#top">Back to top ↑</a></p></footer>
+<dialog class="figure-dialog" aria-label="Enlarged research figure"><div class="dialog-top"><span>OrbitRIR · manuscript figure</span><button type="button" autofocus>Close ×</button></div><img alt=""><p class="dialog-caption"></p></dialog>
+<noscript><div class="wrap no-js-note">Both context-size tables are shown. Figure links work without JavaScript.</div></noscript>
+</body></html>
+'''
+html=html.replace('<!-- SYNTHESIS_TABLES -->',synthesis_table('1')+'\n'+synthesis_table('8')).replace('<!-- LOCALIZATION_TABLE -->',localization_table())
+(ROOT/'index.html').write_text(html)
+print('Generated index.html and results.json from paper-verified values.')
