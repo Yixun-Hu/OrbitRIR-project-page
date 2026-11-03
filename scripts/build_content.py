@@ -7,10 +7,10 @@ HTML = r'''<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OrbitRIR | Frame-Averaged Few-Shot RIR Synthesis</title>
-<meta name="description" content="A geometry-conditioned generative model that learns how a room sounds. Frame Averaging for few-shot RIR synthesis and 3D sound source localization.">
+<meta name="description" content="A geometry-conditioned generative model that uses forward acoustic knowledge to solve inverse localization problems. Frame Averaging for few-shot RIR synthesis and 3D sound source localization.">
 <meta name="theme-color" content="#173d39">
 <meta property="og:title" content="OrbitRIR: Frame-Averaged Few-Shot RIR Synthesis">
-<meta property="og:description" content="A geometry-conditioned generative model that learns how a room sounds.">
+<meta property="og:description" content="A geometry-conditioned generative model that uses forward acoustic knowledge to solve inverse localization problems.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://yixun-hu.github.io/OrbitRIR-project-page/">
 <meta property="og:image" content="https://yixun-hu.github.io/OrbitRIR-project-page/assets/pipeline.png">
@@ -29,21 +29,21 @@ HTML = r'''<!DOCTYPE html>
 <section class="hero wrap" id="top" aria-labelledby="title">
 <p class="eyebrow">NeurIPS 2026 · ESR Workshop</p>
 <h1 id="title"><span class="wordmark">Orbit<span>RIR</span></span><span class="paper-title">Frame-Averaged Few-Shot RIR Synthesis<br class="desktop-break"> for 3D Sound Source Localization</span></h1>
-<p class="hero-copy">A geometry-conditioned generative model that learns how a room sounds.</p>
+<p class="hero-copy">A geometry-conditioned generative model that uses forward acoustic knowledge to solve inverse localization problems.</p>
 <div class="authors-scroll"><p class="authors"><a href="https://yixun-hu.github.io/" target="_blank" rel="noopener noreferrer">Yixun Hu</a><span aria-hidden="true">·</span><a href="https://fourierlaplace124-design.github.io/" target="_blank" rel="noopener noreferrer">Zhixuan Zhao</a><span aria-hidden="true">·</span><a href="https://taozhong.info/" target="_blank" rel="noopener noreferrer">Tao Zhong</a><span aria-hidden="true">·</span><a href="https://cablanc.github.io/" target="_blank" rel="noopener noreferrer">Christine Allen-Blanchette</a></p></div>
 <p class="affiliation">Princeton University</p>
 <div class="release-badges" aria-label="Release status"><span>arXiv <small>Coming soon</small></span><span>Code <small>Coming soon</small></span></div>
 </section>
 
 <section class="section abstract-section" id="abstract" aria-labelledby="abstract-title"><div class="wrap">
-<div class="section-heading"><p class="eyebrow">Learning acoustics. Inferring space.</p><h2 id="abstract-title">Abstract</h2></div>
+<div class="section-heading"><h2 id="abstract-title">Abstract</h2></div>
 <div class="prose">
 <p>Room impulse responses (RIRs) capture how sound interacts with the geometry of a room, making acoustics a rich signal for spatial reasoning. Few-shot acoustic models can predict RIRs from geometry and sparse room observations, but they do not necessarily respect known physical symmetries.</p>
 <p>We introduce <strong>OrbitRIR</strong>, a geometry-conditioned generative acoustic model that incorporates receiver-yaw invariance through <strong>Frame Averaging</strong>. By averaging conditioning features over equivalent coordinate frames, OrbitRIR builds this symmetry into the model. The trained generator can then be frozen and inverted for <strong>3D sound source localization</strong> through analysis-by-synthesis, without localization-specific training or fine-tuning. Experiments on AcousticRooms show improved few-shot RIR synthesis and downstream localization relative to the unconstrained FLAC baseline.</p>
 </div></div></section>
 
 <section class="section wrap" id="method" aria-labelledby="method-title">
-<div class="section-heading"><p class="eyebrow">From geometry to sound, and back</p><h2 id="method-title">Method</h2></div>
+<div class="section-heading"><h2 id="method-title">Method</h2></div>
 <p class="section-intro">Learn a room’s acoustic response from panoramic geometry and a few context RIRs. Then use the same forward model to infer where an observed sound originated.</p>
 <figure class="figure"><a class="fig-link" href="./assets/pipeline.png" aria-label="Enlarge the OrbitRIR pipeline"><img src="./assets/pipeline.png" width="4000" height="1852" loading="lazy" alt="OrbitRIR training and localization pipeline. Frame-averaged geometry conditions RIR generation; at inference, candidate source positions are scored against an observed response."></a><figcaption><strong>One model, two uses.</strong> Train for few-shot acoustic synthesis, then freeze the generator for source localization.</figcaption></figure>
 <div class="method-steps">
