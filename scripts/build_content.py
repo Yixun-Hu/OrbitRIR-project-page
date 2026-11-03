@@ -17,7 +17,7 @@ HTML = r'''<!DOCTYPE html>
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://yixun-hu.github.io/OrbitRIR-project-page/">
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-<link rel="stylesheet" href="./style.css"><script src="./app.js" defer></script>
+<link rel="stylesheet" href="./style.css?v=frame-averaging-20261103"><script src="./app.js?v=frame-averaging-20261103" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
