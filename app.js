@@ -1,4 +1,5 @@
 'use strict';
+document.body.classList.add('js');
 const dialog = document.querySelector('.figure-dialog');
 document.querySelectorAll('.fig-link').forEach(link => {
   link.addEventListener('click', event => {
@@ -33,3 +34,17 @@ if ('IntersectionObserver' in window) {
   }, {rootMargin: '-15% 0px -65% 0px'});
   document.querySelectorAll('section[id]').forEach(section => observer.observe(section));
 }
+
+const angleButtons = [...document.querySelectorAll('[data-angle]')];
+const subscripts = ['₀', '₁', '₂', '₃'];
+angleButtons.forEach(button => button.addEventListener('click', () => {
+  const offset = Number(button.dataset.angle) / 90;
+  angleButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+  document.querySelectorAll('.frame-token').forEach((token, index) => {
+    const frame = (index + offset) % 4;
+    token.querySelector('strong').textContent = 'F' + subscripts[frame];
+    token.querySelector('small').textContent = (frame * 90) + '°';
+  });
+  document.getElementById('orbit-status').textContent =
+    button.dataset.angle + '° frame change: the same four features in a different order. Their average is unchanged.';
+}));

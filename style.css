@@ -6,3 +6,25 @@
 @media(max-width:700px){.wrap{width:calc(100% - 36px)}.nav-row{min-height:60px}.brand{font-size:16px;gap:6px}.brand img{width:23px;height:23px}nav{gap:18px;font-size:12px}.hero{padding-block:44px}.hero-copy{font-size:16px;max-width:440px}.paper-title{font-size:28px}.desktop-break{display:none}.authors{font-size:14px;gap:8px}.section{padding-block:44px}h2{font-size:34px}.section-intro{font-size:16px}.prose{font-size:16px}.method-steps{grid-template-columns:1fr;gap:22px}.method-steps article{display:grid;grid-template-columns:34px 1fr;column-gap:12px}.step-no{grid-row:1/3;font-size:23px}.method-steps h3{margin-bottom:8px}.method-steps p{grid-column:2}.fig-link{padding:9px;border-radius:8px}figcaption{font-size:12px;text-align:left}.result-block p,.method-detail>p{font-size:16px}.result-block p.scope-note,.method-detail>p.scope-note{font-size:13px}.release-section h2{font-size:27px}.site-footer .wrap{flex-direction:column;gap:5px}.figure-dialog{padding:44px 10px 16px}.eyebrow{letter-spacing:.12em;font-size:10px}}
 @media(max-width:380px){.brand{font-size:14px}nav{gap:13px}.paper-title{font-size:25px}.release-badges{gap:8px}.release-badges>span{padding:8px 12px;gap:10px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Finite-yaw Frame Averaging explainer. */
+.orbit-demo{margin:32px 0;background:var(--ink);color:#eff3e9;padding:34px 38px;display:grid;grid-template-columns:1fr 1.1fr;gap:38px;border-radius:10px}
+.orbit-demo>div{min-width:0}.orbit-demo .eyebrow{color:#c3cdbb;font-size:10px}
+.orbit-demo h3{font-family:Georgia,'Times New Roman',serif;font-size:29px;font-weight:400;color:#eff3e9;margin:12px 0}
+.orbit-demo p{font-size:14px;color:#c5d3c8}
+.orbit-demo .angle-controls{display:none;gap:8px;flex-wrap:wrap;margin-top:22px}
+body.js .orbit-demo .angle-controls{display:flex}
+.angle-controls button{font:13px Arial,Helvetica,sans-serif;cursor:pointer;min-width:50px;min-height:44px;border:1px solid #819c90;background:transparent;color:#f6f8ef;padding:7px 14px;border-radius:4px;touch-action:manipulation}
+.angle-controls button:hover{border-color:#e4eccb}
+.angle-controls button[aria-pressed=true]{background:#e4eccb;color:#173d39;border-color:#e4eccb}
+.angle-controls button:focus-visible{outline-color:#e4eccb}
+.orbit-equation{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:180px}
+.frames{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;width:100%;margin-bottom:20px}
+.frame-token{border:1px solid #819c90;text-align:center;padding:18px 3px;border-radius:50% 50% 4px 4px}
+.frame-token strong{font:italic 24px Georgia,'Times New Roman',serif;display:block}
+.frame-token small{font-size:11px;color:#c5d3c8}
+.equation{font:24px Georgia,'Times New Roman',serif;text-align:center}
+.invariant-label{font-size:11px;letter-spacing:1px;color:#d6e4ba;text-transform:uppercase;margin-top:15px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+@media(max-width:700px){.orbit-demo{grid-template-columns:1fr;padding:24px 20px;gap:10px;margin:28px 0}.orbit-demo h3{font-size:26px}.orbit-equation{min-height:160px}.frame-token{padding:13px 2px}.equation{font-size:22px}}
+@media print{.orbit-demo .angle-controls{display:none!important}.orbit-demo{break-inside:avoid}}
