@@ -7,17 +7,17 @@ HTML = r'''<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OrbitRIR | Frame-Averaged Few-Shot RIR Synthesis</title>
-<meta name="description" content="A geometry-conditioned generative model that uses forward acoustic knowledge to solve inverse localization problems. Frame Averaging for few-shot RIR synthesis and 3D sound source localization.">
+<meta name="description" content="A geometry-conditioned generative model that uses forward acoustic knowledge to solve inverse 3D sound source localization problems. Frame Averaging for few-shot RIR synthesis and 3D sound source localization.">
 <meta name="theme-color" content="#173d39">
 <meta property="og:title" content="OrbitRIR: Frame-Averaged Few-Shot RIR Synthesis">
-<meta property="og:description" content="A geometry-conditioned generative model that uses forward acoustic knowledge to solve inverse localization problems.">
+<meta property="og:description" content="A geometry-conditioned generative model that uses forward acoustic knowledge to solve inverse 3D sound source localization problems.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://yixun-hu.github.io/OrbitRIR-project-page/">
 <meta property="og:image" content="https://yixun-hu.github.io/OrbitRIR-project-page/assets/pipeline.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://yixun-hu.github.io/OrbitRIR-project-page/">
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-<link rel="stylesheet" href="./style.css?v=frame-averaging-20261103"><script src="./app.js?v=frame-averaging-20261103" defer></script>
+<link rel="stylesheet" href="./style.css?v=localization-comparison-20261103"><script src="./app.js?v=localization-comparison-20261103" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -29,7 +29,7 @@ HTML = r'''<!DOCTYPE html>
 <section class="hero wrap" id="top" aria-labelledby="title">
 <p class="eyebrow">NeurIPS 2026 · ESR Workshop</p>
 <h1 id="title"><span class="wordmark">Orbit<span>RIR</span></span><span class="paper-title">Frame-Averaged Few-Shot RIR Synthesis<br class="desktop-break"> for 3D Sound Source Localization</span></h1>
-<p class="hero-copy">A geometry-conditioned generative model that uses forward acoustic knowledge to solve inverse localization problems.</p>
+<p class="hero-copy">A geometry-conditioned generative model that uses forward acoustic knowledge to solve inverse 3D sound source localization problems.</p>
 <div class="authors-scroll"><p class="authors"><a href="https://yixun-hu.github.io/" target="_blank" rel="noopener noreferrer">Yixun Hu</a><span aria-hidden="true">·</span><a href="https://fourierlaplace124-design.github.io/" target="_blank" rel="noopener noreferrer">Zhixuan Zhao</a><span aria-hidden="true">·</span><a href="https://taozhong.info/" target="_blank" rel="noopener noreferrer">Tao Zhong</a><span aria-hidden="true">·</span><a href="https://cablanc.github.io/" target="_blank" rel="noopener noreferrer">Christine Allen-Blanchette</a></p></div>
 <p class="affiliation">Princeton University</p>
 <div class="release-badges" aria-label="Release status"><span>arXiv <small>Coming soon</small></span><span>Code <small>Coming soon</small></span></div>
@@ -67,8 +67,25 @@ HTML = r'''<!DOCTYPE html>
 </article>
 <article class="result-block"><h3>3D sound source localization</h3>
 <p>The frozen acoustic generator supports localization without task-specific training. OrbitRIR improves localization over FLAC and achieves the strongest resolution-aware success rate among the compared methods. Results vary by metric: yaw-augmented FLAC has a lower median localization error.</p>
-<figure class="figure"><a class="fig-link" href="./assets/localization-results.jpeg" aria-label="Enlarge localization examples in unseen rooms"><img src="./assets/localization-results.jpeg" width="3300" height="1993" loading="lazy" alt="Qualitative OrbitRIR source-localization predictions across six unseen room layouts. Blue circles indicate predicted positions, red crosses indicate ground-truth sources, and dark markers indicate receivers."></a><figcaption><strong>Localization in unseen rooms.</strong> Blue circles: predictions. Red crosses: ground-truth source positions. Dark markers: receivers.</figcaption></figure>
-<p class="scope-note">These results use AcousticRooms, registered geometry, sparse acoustic context, and omnidirectional monaural RIRs. Localization searches a finite candidate grid.</p>
+<div class="localization-comparison" id="localization-comparison" aria-labelledby="comparison-title">
+<div class="comparison-heading"><h4 id="comparison-title">Compare localization predictions</h4><p>Choose any two methods and explore the room examples from the paper.</p></div>
+<div class="comparison-toolbar"><div><label for="comparison-room">Room</label><select id="comparison-room" aria-controls="comparison-image-a comparison-image-b"><option value="apartment">Apartment · idx 42</option><option value="bathroom" selected>Bathroom · idx 18</option><option value="bedroom">Bedroom · idx 33</option><option value="living-room">Living room with hallway · idx 25</option><option value="meeting-room">Meeting room · idx 20</option><option value="restaurant">Restaurant · idx 24</option><option value="all">All six rooms</option></select></div><button id="comparison-swap" type="button">Swap A ↔ B</button></div>
+<div class="comparison-grid"><figure class="comparison-panel" data-comparison-side="a">
+<div class="comparison-panel-head"><label for="method-a">Method A</label><select id="method-a" aria-controls="comparison-image-a"><option value="orbitrir" selected>OrbitRIR</option><option value="flac">FLAC</option><option value="yaw-flac">Yaw-Augmented FLAC</option><option value="fewshotrir">Few-ShotRIR (AR-adapted)</option><option value="fem">FEM-Based Localization</option></select></div>
+<div class="comparison-viewport"><img id="comparison-image-a" src="./assets/localization-results.jpeg" width="3300" height="1993" loading="lazy" alt="OrbitRIR localization examples in six rooms from Figure 10."></div>
+<figcaption><span class="prediction-key"><span class="prediction-marker" style="--prediction-color:#167dab" aria-hidden="true"></span><span class="prediction-method">OrbitRIR</span> prediction</span><a class="comparison-original" href="./assets/localization-results.jpeg" target="_blank" rel="noopener noreferrer">Full paper figure ↗</a></figcaption>
+</figure><figure class="comparison-panel" data-comparison-side="b">
+<div class="comparison-panel-head"><label for="method-b">Method B</label><select id="method-b" aria-controls="comparison-image-b"><option value="orbitrir">OrbitRIR</option><option value="flac" selected>FLAC</option><option value="yaw-flac">Yaw-Augmented FLAC</option><option value="fewshotrir">Few-ShotRIR (AR-adapted)</option><option value="fem">FEM-Based Localization</option></select></div>
+<div class="comparison-viewport"><img id="comparison-image-b" src="./assets/localization/flac.jpeg" width="3300" height="1985" loading="lazy" alt="FLAC localization examples in six rooms from Figure 12."></div>
+<figcaption><span class="prediction-key"><span class="prediction-marker" style="--prediction-color:#b98117" aria-hidden="true"></span><span class="prediction-method">FLAC</span> prediction</span><a class="comparison-original" href="./assets/localization/flac.jpeg" target="_blank" rel="noopener noreferrer">Full paper figure ↗</a></figcaption>
+</figure></div>
+<div class="comparison-legend"><span><span class="truth-marker" aria-hidden="true">×</span> Ground-truth source</span><span><span class="receiver-marker" aria-hidden="true">▲</span> Receiver</span><span><span class="legend-ring" aria-hidden="true">○</span> Method prediction</span></div>
+<p class="comparison-source">Original visualizations from manuscript Figures 9–13. Select “All six rooms” or open a full paper figure to see each original panel in context.</p>
+<p class="comparison-query-note" id="comparison-query-note" hidden>The FEM apartment panel shows a different receiver/source configuration from the other methods in the source figures; this case is a room-level comparison.</p>
+<p id="comparison-status" class="sr-only" aria-live="polite"></p>
+<noscript><p>Selecting methods and rooms requires JavaScript. The original OrbitRIR and FLAC figures are shown above.</p></noscript>
+</div>
+
 </article></div></section>
 <section class="release-section wrap" aria-labelledby="release-title"><p class="eyebrow">Stay tuned</p><h2 id="release-title">arXiv and code will be released soon.</h2><p>Links to the paper and research code will appear here when available.</p></section>
 </main>

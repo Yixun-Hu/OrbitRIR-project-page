@@ -1,0 +1,129 @@
+{
+  "description": "Original embedded manuscript images used by the localization comparison. No prediction points or experiment values have been synthesized.",
+  "source": "OrbitRIR manuscript, Appendix D.1, Figures 9–13",
+  "methods": {
+    "orbitrir": {
+      "label": "OrbitRIR",
+      "src": "./assets/localization-results.jpeg",
+      "width": 3300,
+      "height": 1993,
+      "figure": 10,
+      "color": "#167dab",
+      "rows": [
+        83,
+        1011
+      ],
+      "columns": [
+        21,
+        1109,
+        2198
+      ]
+    },
+    "flac": {
+      "label": "FLAC",
+      "src": "./assets/localization/flac.jpeg",
+      "width": 3300,
+      "height": 1985,
+      "figure": 12,
+      "color": "#b98117",
+      "rows": [
+        75,
+        1003
+      ],
+      "columns": [
+        21,
+        1109,
+        2198
+      ]
+    },
+    "yaw-flac": {
+      "label": "Yaw-Augmented FLAC",
+      "src": "./assets/localization/yaw-flac.jpeg",
+      "width": 3300,
+      "height": 1981,
+      "figure": 13,
+      "color": "#7951ac",
+      "rows": [
+        71,
+        1000
+      ],
+      "columns": [
+        22,
+        1109,
+        2198
+      ]
+    },
+    "fewshotrir": {
+      "label": "Few-ShotRIR (AR-adapted)",
+      "src": "./assets/localization/fewshotrir.jpeg",
+      "width": 3300,
+      "height": 1990,
+      "figure": 11,
+      "color": "#21866e",
+      "rows": [
+        79,
+        1008
+      ],
+      "columns": [
+        21,
+        1109,
+        2198
+      ]
+    },
+    "fem": {
+      "label": "FEM-Based Localization",
+      "src": "./assets/localization/fem.jpeg",
+      "width": 3300,
+      "height": 1972,
+      "figure": 9,
+      "color": "#b98117",
+      "rows": [
+        62,
+        991
+      ],
+      "columns": [
+        21,
+        1109,
+        2198
+      ]
+    }
+  },
+  "rooms": [
+    {
+      "id": "apartment",
+      "label": "Apartment · idx 42"
+    },
+    {
+      "id": "bathroom",
+      "label": "Bathroom · idx 18"
+    },
+    {
+      "id": "bedroom",
+      "label": "Bedroom · idx 33"
+    },
+    {
+      "id": "living-room",
+      "label": "Living room with hallway · idx 25"
+    },
+    {
+      "id": "meeting-room",
+      "label": "Meeting room · idx 20"
+    },
+    {
+      "id": "restaurant",
+      "label": "Restaurant · idx 24"
+    }
+  ],
+  "crop": {
+    "width": 1082,
+    "rowHeights": [
+      807,
+      806
+    ],
+    "note": "Pixel viewports select room renderings without redrawing or modifying image content."
+  },
+  "caveats": [
+    "The FEM apartment panel visibly uses different receiver/source positions from the other apartment panels; the UI labels this case as a room-level comparison.",
+    "Random Selection is a numeric baseline in Table 2 but has no corresponding qualitative figure in the manuscript, so it is not a visual comparison option."
+  ]
+}
