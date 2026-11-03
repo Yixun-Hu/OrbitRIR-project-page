@@ -33,7 +33,6 @@ HTML = r'''<!DOCTYPE html>
 <div class="authors-scroll"><p class="authors"><a href="https://yixun-hu.github.io/" target="_blank" rel="noopener noreferrer">Yixun Hu</a><span aria-hidden="true">·</span><a href="https://fourierlaplace124-design.github.io/" target="_blank" rel="noopener noreferrer">Zhixuan Zhao</a><span aria-hidden="true">·</span><a href="https://taozhong.info/" target="_blank" rel="noopener noreferrer">Tao Zhong</a><span aria-hidden="true">·</span><a href="https://cablanc.github.io/" target="_blank" rel="noopener noreferrer">Christine Allen-Blanchette</a></p></div>
 <p class="affiliation">Princeton University</p>
 <div class="release-badges" aria-label="Release status"><span>arXiv <small>Coming soon</small></span><span>Code <small>Coming soon</small></span></div>
-<p class="release-note">arXiv and code will be released soon.</p>
 </section>
 
 <section class="section abstract-section" id="abstract" aria-labelledby="abstract-title"><div class="wrap">
