@@ -1,16 +1,35 @@
 'use strict';
-document.body.classList.add('js');
-const menuButton=document.querySelector('.menu-toggle');
-const nav=document.querySelector('.nav-links');
-menuButton.addEventListener('click',()=>{const open=menuButton.getAttribute('aria-expanded')!=='true';menuButton.setAttribute('aria-expanded',String(open));nav.classList.toggle('open',open);});
-nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{menuButton.setAttribute('aria-expanded','false');nav.classList.remove('open');}));
-const contextButtons=[...document.querySelectorAll('[data-context]')];
-function setContext(k){contextButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.context===k)));document.querySelectorAll('.synthesis-panel').forEach(p=>{p.hidden=p.id!=='context-'+k;});}
-contextButtons.forEach(b=>b.addEventListener('click',()=>setContext(b.dataset.context)));setContext('8');
-const angleButtons=[...document.querySelectorAll('[data-angle]')];
-angleButtons.forEach(b=>b.addEventListener('click',()=>{const offset=Number(b.dataset.angle)/90;angleButtons.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));document.querySelectorAll('.frame-token').forEach((t,i)=>{const n=(i+offset)%4;t.querySelector('strong').textContent='F'+['₀','₁','₂','₃'][n];t.querySelector('small').textContent=(n*90)+'°';});document.getElementById('orbit-status').textContent=b.dataset.angle+'° frame change: the same four features in a different order. Their average is unchanged.';}));
-const dialog=document.querySelector('.figure-dialog');
-document.querySelectorAll('.fig-link').forEach(link=>link.addEventListener('click',e=>{if(!dialog.showModal)return;e.preventDefault();const original=link.querySelector('img');const img=dialog.querySelector('img');img.src=link.href;img.alt=original.alt;dialog.querySelector('.dialog-caption').textContent=link.closest('figure').querySelector('figcaption').textContent;dialog.showModal();}));
-dialog.querySelector('button').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
-document.getElementById('copy-citation').addEventListener('click',async()=>{const button=document.getElementById('copy-citation');try{await navigator.clipboard.writeText(document.getElementById('bibtex').textContent);button.textContent='Copied';document.getElementById('copy-status').textContent='Citation copied to clipboard.';}catch{button.textContent='Select text to copy';const range=document.createRange();range.selectNodeContents(document.getElementById('bibtex'));const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);document.getElementById('copy-status').textContent='Citation selected. Press your copy shortcut.';}});
-if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){nav.querySelectorAll('a').forEach(a=>a.removeAttribute('aria-current'));nav.querySelector('a[href="#'+e.target.id+'"]')?.setAttribute('aria-current','location');}});},{rootMargin:'-15% 0px -65% 0px'});document.querySelectorAll('main>section[id]').forEach(s=>observer.observe(s));}
+const dialog = document.querySelector('.figure-dialog');
+document.querySelectorAll('.fig-link').forEach(link => {
+  link.addEventListener('click', event => {
+    if (!dialog || typeof dialog.showModal !== 'function') return;
+    event.preventDefault();
+    const original = link.querySelector('img');
+    const image = dialog.querySelector('img');
+    image.src = link.href;
+    image.alt = original.alt;
+    dialog.querySelector('.dialog-caption').textContent =
+      link.closest('figure').querySelector('figcaption').textContent;
+    dialog.showModal();
+  });
+});
+dialog?.querySelector('.dialog-close').addEventListener('click', () => dialog.close());
+dialog?.addEventListener('click', event => {
+  if (event.target !== dialog) return;
+  const bounds = dialog.getBoundingClientRect();
+  if (event.clientX < bounds.left || event.clientX > bounds.right ||
+      event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
+});
+if ('IntersectionObserver' in window) {
+  const links = document.querySelectorAll('nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      links.forEach(link => {
+        if (link.hash === '#' + entry.target.id) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    });
+  }, {rootMargin: '-15% 0px -65% 0px'});
+  document.querySelectorAll('section[id]').forEach(section => observer.observe(section));
+}

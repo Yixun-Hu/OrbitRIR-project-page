@@ -1,8 +1,10 @@
 # OrbitRIR project website
 
-English research project page for **OrbitRIR: Frame-Averaged Few-Shot RIR Synthesis for 3D Sound Source Localization**, accepted to the NeurIPS 2026 ESR Workshop.
+English project page for **OrbitRIR: Frame-Averaged Few-Shot RIR Synthesis for 3D Sound Source Localization**, accepted to the NeurIPS 2026 ESR Workshop.
 
-This standalone repository contains the website only: HTML, CSS, JavaScript, five manuscript figures, and the result tables displayed on the page. It does not contain the research implementation, model weights, raw experiment data, internal review notes, or a provisional manuscript PDF.
+Website: https://yixun-hu.github.io/OrbitRIR-project-page/
+
+This standalone repository contains only the website and manuscript figures. The research implementation, model weights, raw experiment data, internal notes, and manuscript PDF are not included. **arXiv and code will be released soon.**
 
 ## Local preview
 
@@ -14,22 +16,22 @@ Open http://localhost:8000. No package installation or build step is required.
 
 ## Files and editing
 
-- `index.html`: complete research page with semantic tables.
-- `style.css`, `app.js`, `favicon.svg`: styling, interactive controls, and icon.
-- `assets/`: manuscript figures (Figures 1, 2, 3, 4, and 10).
-- `results.json`: the paper values displayed in the tables (Tables 1 and 2).
-- `scripts/build_content.py`: content and table generator. Edit this file for page text, resource links, citations and results, then run `python3 scripts/build_content.py`.
+- `index.html`: generated static page organized as Abstract, Method, and Results.
+- `scripts/build_content.py`: page content source; run `python3 scripts/build_content.py` after editing.
+- `style.css`, `app.js`, `favicon.svg`: presentation, accessible figure enlargement, and icon.
+- `assets/`: manuscript figures. Figures 2, 3, 4, and 10 appear on the page; the conceptual teaser is retained as an asset.
+- `results.json`: previously transcribed manuscript tables for reference; not loaded or displayed by the page.
 
-Edit CSS and JavaScript directly. The site uses relative asset paths and works under a repository subpath.
+The four author names stay on a single row. On narrow screens, the author row can scroll horizontally without making the page overflow. Figures open in a dialog and can be closed with the Close button or Escape.
 
 ## Deployment
 
-Publish the repository root as a static site; leave the build command empty. For GitHub Pages, select **Settings → Pages → Deploy from a branch → main → /(root)**. Creating this public source repository does not itself enable GitHub Pages.
+GitHub Pages serves `main` → `/(root)` from this public website repository. The `.nojekyll` file bypasses Jekyll processing. Asset paths are relative and work under the repository subpath. Commit regenerated `index.html` together with content-source changes.
+
+The private research repository is independent of this deployment.
 
 ## Research content
 
-The page distinguishes finite yaw-group invariance from arbitrary continuous rotation invariance, and reports all comparison baselines without claiming every metric is best. The interactive frame permutation is conceptual; it is not an acoustic simulation.
+The page summarizes manuscript findings without numerical highlight cards. Frame Averaging enforces invariance over a finite yaw group; localization uses the frozen generator and requires no localization-specific training. The qualitative figures and synthesis plots are original manuscript figures.
 
-The paper and research-code resource links are pending. Add verified public URLs when available. The displayed citation is provisional and should be updated against the final public paper.
-
-Figures and research content remain subject to their respective rights. No research-code license or release is implied by publishing this website source.
+Add verified public arXiv and research-code links when those releases are available. Figures and research content remain subject to their respective rights; publishing this website does not release or license the research implementation.
